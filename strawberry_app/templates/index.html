@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <title>Strawberry Diease Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+    <div class="container">
+
+        <!-- Cột bên trái: ảnh tổng thể + form upload -->
+        <div class="left-column">
+            <div class="image-frame">
+                {% if image_result %}
+                    <img id="previewImage" src="{{ image_result }}" alt="Ảnh tổng thể" />
+                {% else %}
+                    <img id="previewImage" src="" alt="Choose an image" style="display:none;" />
+                    <span id="noImageText">Choose an image</span>
+                {% endif %}
+            </div>
+
+            <form method="POST" enctype="multipart/form-data" class="form-upload" id="uploadForm">
+                <input type="file" name="file" id="fileInput" accept="image/*" style="display:none" />
+                <button type="button" onclick="document.getElementById('fileInput').click()">Choose Pic</button>
+                <button type="submit">Check</button>
+            </form>
+        </div>
+
+        <!-- Cột bên phải trên: Dâu bị bệnh -->
+        <div class="right-top-frame">
+            {% if crops_disease %}
+                <h3 style="padding:10px;">Disease in strawberries detected:</h3>
+                <div style="display:flex; flex-wrap: wrap; gap: 15px; padding: 10px;">
+                    {% for crop in crops_disease %}
+                        <div style="text-align: center; border: 1px solid #ccc; border-radius: 10px; padding: 5px; width: 160px;">
+                            <img src="data:image/jpeg;base64,{{ crop.image }}" alt="Crop" style="width:150px; height:150px; object-fit: cover; border-radius: 10px;" />
+                            <div style="margin-top: 8px; font-weight: bold;">{{ crop.label }}</div>
+                            <div style="color: red;">{{ "%.2f"|format(crop.confidence) }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p style="padding:10px;">Undetected disease in strawberries</p>
+            {% endif %}
+        </div>
+
+        <!-- Cột bên phải dưới: Trái cây với trạng thái chín -->
+        <div class="right-bottom-frame">
+            {% if crops_fruit %}
+                <h3 style="padding:10px;">Fruit detected:</h3>
+                <div style="display:flex; flex-wrap: wrap; gap: 15px; padding: 10px;">
+                    {% for crop in crops_fruit %}
+                        <div style="text-align: center; border: 1px solid #ccc; border-radius: 10px; padding: 5px; width: 160px;">
+                            <img src="data:image/jpeg;base64,{{ crop.image }}" alt="Crop" style="width:150px; height:150px; object-fit: cover; border-radius: 10px;" />
+                            <div style="margin-top: 8px; font-weight: bold;">{{ crop.label }}</div>
+                            <div style="color: {% if crop.status == 'Ripe' %}green{% else %}red{% endif %};">{{ crop.status }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p style="padding:10px;">None fruit detected</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <!-- Ảnh dâu cố định -->
+    <img src="{{ url_for('static', filename='uploads/icon.png') }}" alt="Strawberry" class="strawberry-img" />
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const previewImage = document.getElementById('previewImage');
+        const noImageText = document.getElementById('noImageText');
+
+        fileInput.addEventListener('change', function () {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                    if (noImageText) noImageText.style.display = 'none';
+                };
+
+                reader.readAsDataURL(this.files[0]);
+
+                // Nếu muốn tự động submit form upload lên server, bỏ comment dòng dưới
+                // document.getElementById('uploadForm').submit();
+            } else {
+                previewImage.src = '';
+                previewImage.style.display = 'none';
+                if (noImageText) noImageText.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

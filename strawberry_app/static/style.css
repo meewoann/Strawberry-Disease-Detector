@@ -1,0 +1,146 @@
+/* Reset cơ bản */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+    background: linear-gradient(to bottom, #7bd9b3, #a3d9aa);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Container chính chia 2 cột và 2 hàng */
+.container {
+    display: grid;
+    grid-template-columns: 30% 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-gap: 20px;
+    height: calc(100vh - 40px);
+    border-radius: 15px;
+    background: #fff;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Cột trái: ảnh tổng thể + form upload */
+.left-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 20px;
+    border-radius: 10px;
+}
+
+/* Khung ảnh tổng thể */
+.image-frame {
+    height: 300px;
+    background-color: #d2e5d9;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Ảnh trong khung tổng thể */
+.image-frame img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+/* Form upload */
+.form-upload {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.form-upload button {
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.form-upload button:hover {
+    background-color: #45a049;
+}
+
+/* Khung bên phải trên và dưới */
+.right-top-frame,
+.right-bottom-frame {
+    background-color: #d2e5d9;
+    border-radius: 20px;
+    padding: 15px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+/* Khung bên phải trên */
+.right-top-frame {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+}
+
+/* Khung bên phải dưới */
+.right-bottom-frame {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+}
+
+/* Container các crop ảnh trong khung phải */
+.right-top-frame > div,
+.right-bottom-frame > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+/* Mỗi crop item */
+.crop-item {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 5px;
+    width: 160px;
+    text-align: center;
+    background: white;
+}
+
+.crop-item img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.crop-label {
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.crop-status-green {
+    color: green;
+    margin-top: 3px;
+}
+
+.crop-status-red {
+    color: red;
+    margin-top: 3px;
+}
+
+/* Ảnh dâu cố định */
+.strawberry-img {
+    position: fixed;
+    bottom: 20px;
+    left: 5px;
+    width: 500px;
+    border-radius: 10px;
+    user-select: none;
+    pointer-events: none;
+    z-index: 1000;
+}
