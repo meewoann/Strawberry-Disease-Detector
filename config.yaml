@@ -1,0 +1,42 @@
+# YOLOv8-seg với ResNet head custom
+task: segment
+nc: 2                      # số lớp detect: ['Fruit', 'Leaf']
+num_disease_classes: 7     # số lớp disease cần dự đoán
+
+depth_multiple: 0.33
+width_multiple: 0.25
+
+backbone:
+  - [-1, 1, Conv, [64, 3, 2]]              # đầu vào 3 kênh -> ra 64 kênh
+  - [-1, 1, Conv, [128, 3, 2]]             # vào 64 kênh -> ra 128 kênh
+  - [-1, 3, C2f, [128, 128]]                # c1=128, c2=128
+  - [-1, 1, Conv, [256, 3, 2]]             # vào 128 kênh -> ra 256 kênh
+  - [-1, 3, C2f, [256, 256]]
+  - [-1, 1, Conv, [512, 3, 2]]             # vào 256 kênh -> ra 512 kênh
+  - [-1, 3, C2f, [512, 512]]
+  - [-1, 1, Conv, [1024, 3, 2]]            # vào 512 kênh -> ra 1024 kênh
+  - [-1, 3, C2f, [1024, 1024]]
+  - [-1, 1, SPPF, [1024, 1024, 5]]         # c1=1024, c2=1024, kernel=5
+
+head:
+  - [-1, 1, Conv, [512, 1, 1]]              # c1 tùy, ra 512 kênh
+  - [-1, 1, nn.Upsample, [None, 2, 'nearest']]
+  - [[-1, 6], 1, Concat, [1]]
+  - [-1, 3, C2f, [1024, 512]]
+
+  - [-1, 1, Conv, [256, 1, 1]]
+  - [-1, 1, nn.Upsample, [None, 2, 'nearest']]
+  - [[-1, 4], 1, Concat, [1]]
+  - [-1, 3, C2f, [512, 256]]
+
+  - [-1, 1, Conv, [256, 3, 2]]
+  - [[-1, 12], 1, Concat, [1]]
+  - [-1, 3, C2f, [512, 512]]
+
+  - [-1, 1, Conv, [512, 3, 2]]
+  - [[-1, 9], 1, Concat, [1]]
+  - [-1, 3, C2f, [1024, 1024]]
+
+  - [-1, 1, Segment, [2, 32, 64, 128], {"num_disease_classes": 7}]
+
+
